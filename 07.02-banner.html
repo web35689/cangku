@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		* {padding: 0;margin: 0;}
+		img {display: block;}
+		/* 轮播图 */
+		.seamless_rotation {overflow: hidden;position: relative;}
+		.ban_pic_contain ul {position: absolute;}
+		.seamless_rotation ul li {float: left;list-style: none;}
+		/* 轮播图按钮 */
+		.ban_btn_contain {position: absolute;right: 5px;bottom: 5px;z-index: 5;}
+		.ban_btn_contain ul li {margin-right: 2px;width: 15px;line-height: 15px;text-align: center;background: #fff8eb;cursor: pointer;color: #ff7f00;font-weight: bolder;font-size: 12px;}
+		/* 按钮选中的切换样式 */
+		.ban_btn_contain ul .active {background: #ff7f00;color: #fff;}
+	</style>
+</head>
+<body>
+	<!-- 无缝轮播 -->
+	<div class="seamless_rotation">
+		<div class="ban_pic_contain">
+			<script src="http://www.zhuwang.cc/api.php?op=ad_data&id=44"></script>
+			<!-- <ul>
+				<li><a href=""><img src="https://live.zhuwang.cc/uploads/images/20200617/1000902f6a73f548a98dcabbd1ff5a37.gif" alt="中国养猪网"></a></li>
+				<li><a href=""><img src="https://live.zhuwang.cc/uploads/images/20200416/9751affd3df512c06c57fc98d568458d.gif" alt="中国养猪网"></a></li>
+				<li><a href=""><img src="https://live.zhuwang.cc/uploads/images/20200416/da8b307c5fa707873fe7ab6422d27b61.gif" alt="中国养猪网"></a></li>
+				<li><a href=""><img src="https://live.zhuwang.cc/uploads/images/20200422/0c4918dad79bbb45961956ca9f1b0306.gif" alt="中国养猪网"></a></li>
+			</ul> -->
+		</div>
+		<div class="ban_btn_contain">
+			<ul></ul>
+		</div>
+	</div>
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			var Timer;
+			// 初始化  视线所看见轮播的下标
+			var index = 0;
+			var banLi = $(".ban_pic_contain ul li");
+			// 动态根据轮播图数量创建按钮
+			for (var i = 0; i < banLi.length; i++) {
+				if(i == 0) {
+					$(".ban_btn_contain ul").append("<li class='active'>" + (i + 1) + "</li>");
+				}else {
+					$(".ban_btn_contain ul").append("<li>" + (i + 1) + "</li>");
+				}
+			}
+			// 获取图片宽高
+			var banimgw = $(".ban_pic_contain img").width();
+			var banimgh = $(".ban_pic_contain img").height();
+			$(".ban_pic_contain img").width(banimgw);
+			$(".ban_pic_contain img").height(banimgh);
+			// 无缝轮播 克隆
+			$(".ban_pic_contain ul").prepend(banLi.eq(banLi.length - 1).clone());
+			$(".ban_pic_contain ul").append(banLi.eq(0).clone());
+			// 给最外层容器设宽高
+			$(".seamless_rotation").width(banimgw);
+			$(".seamless_rotation").height(banimgh);
+			// 初始化  给ul设置定位left值
+			$(".ban_pic_contain ul").css({"left": "-" + banimgw + "px","width": banimgw * parseInt(banLi.length + 2)});
+			// 自动轮播
+			Timer = setInterval(autoBan,3000);
+			function autoBan(){
+				index ++;
+				if(index >= banLi.length) {
+					$(".ban_pic_contain ul").stop().animate({"left": "-" + (banimgw * (index + 1)) + "px"},500,function(){
+						index = 0;
+						$(".ban_btn_contain ul li").eq(index).addClass("active").siblings().removeClass("active");
+						$(".ban_pic_contain ul").css({"left": "-" + banimgw + "px"});
+					});
+				}else {
+					$(".ban_btn_contain ul li").eq(index).addClass("active").siblings().removeClass("active");
+					$(".ban_pic_contain ul").stop().animate({"left": "-" + (banimgw * (index + 1)) + "px"},500);
+				}
+			}
+			// 鼠标悬浮切换轮播与按钮
+			$(".ban_btn_contain ul li").on("mouseenter",function(){
+				// 停止定时器
+				clearInterval(Timer);
+				// 将按钮绑定轮播
+				index = $(this).html() - 1;
+				if(!($(this).hasClass("active"))) {
+					$(this).addClass("active").siblings().removeClass("active");
+					$(".ban_pic_contain ul").stop().animate({"left": "-" + (banimgw * (index + 1)) + "px"},500);
+				}
+			});
+			$(".seamless_rotation").on("mouseenter",function(){
+				// 停止定时器
+				clearInterval(Timer);
+			});
+			// 鼠标离开按钮与轮播开启定时器
+			$(".seamless_rotation").on("mouseleave",function(){
+				clearInterval(Timer);
+				Timer = setInterval(autoBan,3000);
+			});
+		})
+	</script>
+</body>
+</html>
